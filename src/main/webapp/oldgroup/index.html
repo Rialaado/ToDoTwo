@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<!--AS MUCH AS POSSIBLE - PUT STYLE/CSS IN THE STYLE FILES - GOOD CODING PRACTICE -->
+	
+<meta charset="ISO-8859-1">
+<title>Login Page</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="text/javascript">
+
+function setUpDisplay(){
+	
+}
+
+function validateForm(){
+		
+	document.body.getElementById("loginFailed").value = "Please Enter a Valid Username or Password";	
+	
+}
+	
+function login() {
+
+	    var username = document.getElementById("usernameId").value;
+	    var password = document.getElementById("passwordId").value;
+	    
+	    postRequest( { 
+	        	url: "http://localhost:8080/RestJPA/services/message/login",
+	            payload: JSON.stringify({username: username, password: password }),
+	            handler: function(response) { 
+	            	document.getElementById("loginStatus").style.visibility="hidden";
+	            	alert("completed");
+	            	var JSON_object = JSON.parse(response);
+	            	setCookie("loginservice1", JSON_object.username, 0)
+	            	setCookie("loginservice2", JSON_object.password, 0)
+	            	setCookie("loginservice3", JSON_object.accounttype, 0)
+	            	window.location.assign(JSON_object.url); 
+	               }
+	      		 } );
+ }
+
+
+function postRequest( request ) {
+    var http_request  = new XMLHttpRequest();
+    http_request.open("POST", request.url, true);
+    http_request.setRequestHeader("Content-type","application/json");
+    http_request.onreadystatechange = function() {
+    	var notification = document.getElementById("loginStatus");
+    	
+        if (http_request.readyState == 4 && http_request.status == 200) {
+        	notification.style.visibility="hidden";
+        	document.getElementById("login").reset();
+            request.handler.call(request, http_request.responseText);
+            
+        }else{
+        	var JSON_object = JSON.parse(http_request.responseText);
+        	notification.style.visibility = "visible";
+        	notification.innerHTML =  JSON_object.notification;
+        	notification.style.color = "red";
+        }
+    }
+    http_request.send( request.payload );
+}
+</script>
+
+</head>
+<body  id= "backgBody" onload="setUpDisplay();">
+<p id="loginFailed"></p>
+<div>
+		<form action="" method=GET  id="login">
+			<h1 style="text-align:center;">Login</h1>
+				<div id = "loginStatus" align="center">
+				<br>
+				</div>	
+				<div id="username">
+				 <label for="username"> 
+				 	<span>Username: </span>
+				 	<input type="text" placeholder="Username" required="" name ="username" id= "usernameId"  />
+				 </label>
+				</div>
+				
+				<div id="password">
+				 <label for="password">
+				 	<span>Password: </span>
+				 	<input type="password" placeholder="Password" required="" name="password" id= "passwordId"/>
+				 </label>
+				</div>
+			<table align="center" >	
+			<tr >
+				<td><input type="button" value="Login" name = "signin" onclick = "login();"/> </td>
+			</tr>
+			</table>
+		</form>
+</div>
+<script src="cookielib.js" type="text/javascript"></script>
+</body>
+</html>

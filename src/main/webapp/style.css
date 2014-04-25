@@ -1,0 +1,62 @@
+body{
+background-color:black;
+
+}
+div.background{
+	/*border: 1px solid;*/
+	background-color:black;
+	height: 100%;
+	width: 100%;
+}
+
+div.banner{
+	/*border: 1px solid;*/
+	min-height: 100px;
+
+}
+
+form.login{
+	border:1px solid;
+	
+}
+
+ul{
+	list-style-type: none;	
+}
+
+li.boxTitle{
+	tcolor: #B4886B;
+
+}
+
+li{
+	clear:left;
+	/*margin-bottom: 10px; */
+}
+
+label{
+	margin-right: 10px;
+	/*float:left; */
+
+}
+
+table.login{
+	text-align: center;
+	margin-left:auto;
+	margin-right:auto;
+	
+	
+
+}
+
+div.middle{
+	background-color: #80B2B2;
+	border: 1px solid;
+	border-radius: 15px;
+	text-align: center;
+	margin-left:auto;
+	margin-right:auto;
+	width:40%;
+	min-height:300px;
+	padding-top: 50px;
+}

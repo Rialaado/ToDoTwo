@@ -1,0 +1,151 @@
+
+
+div.container{
+
+   min-height:100%;
+   position:relative;
+
+}
+
+div.banner{
+	background-color: "#E0E6F8";
+}
+
+div.footer{
+	bottom:0;
+    
+    height:100px;  
+}
+
+div.footnoteText{
+	position: relative;
+}
+
+div.options{
+	border: 1px solid;
+	border-radius: 15px;
+	border-color:#0C0C0;
+	min-height: 50px;
+	text-align: center;
+	padding-top: 5px;
+	margin-left:auto;
+	margin-right:auto;
+	width:80%;
+	background-color:#E0E6F8;
+}
+
+div.output{
+	border: 1px solid;
+	border-radius: 15px;
+	border-color:#0C0C0;
+	min-height: 275px;
+	margin-left:auto;
+	margin-right:auto;
+	width: 60%;
+	text-align: center;
+	padding-top: 2px;
+	background-color:#E0E6F8;
+}
+
+div.spacer{
+	min-height: 3px;
+}
+
+table, td, tr{
+	border: 1px solid;
+	border-collapse:collapse;
+	margin: 0 auto;
+
+}
+
+select{
+	height: 25px; 
+	width: 150px;
+}
+button{
+	color: #333333;
+	margin: 0 auto;
+	border-radius: 10px;
+	border: 1px solid;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+h1{
+	color:#05236C;
+	font-type:"Lucida Sans Unicode";
+	font-size: 150%;
+	position:relative;
+	padding-top: 40px;
+	text-align: center;
+	padding-right:140px;
+}
+hr{
+	margin-top: 30px;
+
+}
+
+p.footnote{
+	color: grey;
+	text-align: center;
+}
+
+img.logo{
+	padding-left: 50px;
+	float: left;
+	 
+}
+
+
+input[type=fileChoose]
+{
+   size = 10;
+    height: 25px;
+    width: 20px;
+    color: #bbbbbb;
+    border: 5px solid black;
+
+}
+/*
+input[type=upload]{
+	
+	height: 25px;
+    width: 80px;
+}
+
+input[type=submit]{
+
+}
+*/
+
+table.hovertable {
+	font-family: verdana,arial,sans-serif;
+	font-size:11px;
+	color:#333333;
+	border-width: 1px;
+	border-color: #999999;
+	border-collapse: collapse;
+	margin: 0 auto;
+	cellspacing="0"; 
+	cellpadding="1"; 
+	border="1"; 
+	align="center"; 
+	overflow:auto;
+}
+table.hovertable th {
+	background-color:#c3dde0;
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #a9c6c9;
+}
+table.hovertable tr {
+	background-color:#d4e3e5;
+}
+table.hovertable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #a9c6c9;
+}
+	

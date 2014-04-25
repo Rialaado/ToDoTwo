@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<link href="style.css" rel="stylesheet" type="text/css" media="all" /> 
+<html>
+
+
+
+<script type='text/javascript'>
+/* function emailValidator(elem, helperMsg){
+	var emailExp = /^[\w\-\.\+]+\@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/;
+	if(elem.value.match(emailExp)){
+		return true;
+	}else{
+		alert(helperMsg);
+		elem.focus();
+		return false;
+	}
+}
+ */
+function validateForm()
+{
+var email=document.forms["validateForm1"]["email"].value;// document.getElementById("username").value;
+var y=document.forms["validateForm1"]["password"].value;//documentgetElementById("password").value;
+
+if ((/(.+)@(.+){2,}\.(.+){2,}/.test(email)) || email=="" || email==null) { } else {
+    alert("Please enter a valid email");
+    return false;
+}
+if (y==null || y=="")
+  {
+  alert("Password must be filled out");
+  return false;
+  }
+
+}
+
+
+function submitRegistrationForm() {
+
+// 	var validate = emailValidator(document.getElementById('email'), 'Not a Valid Email');
+// 	if(validate == false){
+// 		treturn false;
+// 	}
+	
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    
+    postRequest( { 
+        	url: "http://localhost:8080/toDoList/services/message/register",
+            payload: JSON.stringify({username: username, password: password}),
+            handler: function(response) { 
+            	
+            	var JSON_object = JSON.parse(response);
+               	alert(JSON_object.notification);
+            	
+               }
+      		 } );
+}
+
+function postRequest( request ) {
+
+	
+    var http_request  = new XMLHttpRequest();
+    http_request.open("POST", request.url, true);
+    http_request.setRequestHeader("Content-type","application/json");
+    
+    http_request.onreadystatechange = function() {
+    	var notification = document.getElementById("notification");
+    	
+        if (http_request.readyState == 4 && http_request.status == 200) {
+        	document.getElementById("register").reset();
+            request.handler.call(request, http_request.responseText);
+        }else if (http_request.status == 500){
+        	var JSON_object = JSON.parse(http_request.responseText);
+        	alert(JSON_object.notification);  	
+        }
+    }
+    http_request.send( request.payload );
+}
+</script>
+
+
+
+
+
+<body>
+
+	<div class="background">
+
+		<div class="banner">
+
+		</div>
+	
+	<div class="middle">
+	<form action="" class=loginform name = "validateForm1"  id="register" method="POST">
+	<h1> Registration </h1>
+	<ul>
+            <li>
+                <label for="username">username</label>
+                <input type="text" name="username" id="username">
+            </li>
+            <li>
+                <label for="password">password</label>
+                <input type="text" name="password" id="password">
+            </li>
+            <li>
+            	<!--   <input name="Submit" type="button" value="Register" onclick=" submitRegistrationForm();" value='Check Field' /></div> -->
+                <input name="Submit" type="button" value="Register" onclick="submitRegistrationForm();" >
+            </li>
+        </ul>
+			
+	</form>
+	<p>	Note: Usernames/Passwords may not be blank </p>
+
+	</div>
+		<script src="cookielib.js" type="text/javascript"></script>
+</body>
+</html>
