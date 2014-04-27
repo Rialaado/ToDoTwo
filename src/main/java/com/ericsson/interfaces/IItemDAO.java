@@ -8,7 +8,7 @@ import com.ericsson.entities.Item;
 
 public interface IItemDAO {
 	
-	public void addItem(Item entity);
+	public String addItem(Item entity);
 	
 	public void removeItem(Item entity);
 	
@@ -17,5 +17,7 @@ public interface IItemDAO {
 	public Item findItem(int itemID);
 	
 	public List<Item> findAllItems();
+	
+	public List<Item> findAllItemsForUser(String username);
 
 }

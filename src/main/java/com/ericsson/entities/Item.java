@@ -28,6 +28,12 @@ public class Item implements Serializable {
 	public Item() {
 	}
 
+	public Item(User u, String des){
+		this.user = u;
+		this.descrip = des;
+	}
+	
+	
 	public int getItemID() {
 		return this.itemID;
 	}

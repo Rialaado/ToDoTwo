@@ -45,7 +45,6 @@ public class ServiceEJB implements IServiceEJB {
 	public String addNewUser(User entity) {
 		String userExist = null;
 		try {
-			System.out.println("ServiceEJB LOOKS LIKE: "+entity.getUsername() + " and password: "+entity.getPassword());
 			userExist = userDAO.addUser(entity);
 		} catch (Exception e) {
 			userExist = null;
@@ -69,8 +68,46 @@ public class ServiceEJB implements IServiceEJB {
 		
 		return items;
 	}
+		
+//	@Override
+//	public String addNewUser(User entity) {
+//		String userExist = null;
+//		try {
+//			userExist = userDAO.addUser(entity);
+//		} catch (Exception e) {
+//			userExist = null;
+//		}
+//		System.out.println("in serviceEJB with userExist: "+userExist);
+//		return userExist;
+//	}
+	
+	@Override
+	public User searchforAccountByUsername(String username){
+		User user = null;
+		
+		try {
+			System.out.println(username +"----");
+			user = userDAO.findUserAccount(username);
+		} catch (Exception e) {
+			System.out.println("servicedao search for user error");
+			user = null;
+		}
+		
+		return user;
+		
+	}
 	
 	
+	@Override
+	public String addNewitem(Item item){
+		String itemSuccess = null;
+		try{
+			itemSuccess = itemDAO.addItem(item);
+		}catch (Exception e){
+			itemSuccess = null;
+		}
+		return itemSuccess;
+	}
 	
 	@Override
 	public User searchforAccountUsernameAndPassword(String username, String password){
@@ -89,7 +126,19 @@ public class ServiceEJB implements IServiceEJB {
 		
 	}
 
-
+	@Override   
+	public List<Item> searchforUserItems(String accountName){
+		List<Item> items = null;
+		
+		try{
+			items = itemDAO.findAllItemsForUser(accountName);
+		}
+		catch(Exception e){
+			System.out.println("servicedao search for account error");
+			items = null;
+		}
+		return items;
+	}
 	
 	
 	

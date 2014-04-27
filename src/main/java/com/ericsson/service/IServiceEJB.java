@@ -20,7 +20,10 @@ public interface IServiceEJB {
 
 	public User searchforAccountUsernameAndPassword(String username, String password);
 
-
+	public List<Item> searchforUserItems(String accountName);
 	
+	public String addNewitem(Item item);
+	
+	public User searchforAccountByUsername(String username);
 
 }

@@ -24,14 +24,16 @@ public class ItemDAO implements IItemDAO{
 	
 	
 	@Override
-	public void addItem(Item entity) {
+	public String addItem(Item entity) {
+		String itemSuccess = null;
 		try {
 			em.persist(entity);
-					
+			itemSuccess = ("item added to db successfully");		
 		} catch (NoResultException e) {
-		
-			System.out.println("CellHier was not created");
+			itemSuccess = ("item not added, problems");
+			System.out.println("item was not created");
 		}
+		return itemSuccess;
 	}
 
 	@Override
@@ -94,5 +96,23 @@ public class ItemDAO implements IItemDAO{
 		
 		return items;
 	}
-
+	
+	@Override
+	public List<Item> findAllItemsForUser(String username) {
+		List<Item> items = null;
+		String name = username;
+		try {
+			
+			Query query = em.createNativeQuery("select * from item where username = :username", User.class);
+			query.setParameter("username", name);
+			items = (List<Item>) query.getResultList();
+			
+		} catch (NoResultException e) {
+			System.out.println("item DAO threw an except");
+			items = null;
+		}
+		
+		return items;
+	}
+	
 }

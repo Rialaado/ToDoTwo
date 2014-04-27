@@ -21,4 +21,6 @@ public interface IUserDAO {
 	boolean doesUserNameExist(String username);
 
 	public User findUserAccountUsernameAndPassword(String username, String password);
+
+	
 }

@@ -34,6 +34,7 @@ import jxl.JXLException;
 import jxl.Workbook;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
@@ -41,11 +42,15 @@ import com.ericsson.entities.User;
 import com.ericsson.entities.Item;
 import com.ericsson.other.Authentication;
 import com.ericsson.other.Login;
+import com.ericsson.other.MessageRapper;
 import com.ericsson.other.Notification;
+import com.ericsson.other.StringOps;
 import com.ericsson.other.Top10Failure;
 import com.ericsson.service.IServiceEJB;
 import com.ericsson.uploadpath.FileOp;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializer;
 //import com.googlecode.htmleasy.View;
 
 @Path("/message")
@@ -66,15 +71,16 @@ public class RestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response registerUser(String req){
 		System.out.println("getting into RESTSERVICE");
+		Item item = null;
 		ResponseBuilder response = null;
-		User user = json.fromJson(req, User.class);
+		item = json.fromJson(req, Item.class);
 		
 		try {
-			String userExist = serviceEjb.addNewUser(user);
-			 
+			String itemSuccess = serviceEjb.addNewitem(item);	 
 			Notification message = new Notification();
-			message.setNotification(userExist);
+			message.setNotification(itemSuccess);
 			response =  Response.status(200).entity(message).type(MediaType.APPLICATION_JSON);
+			
 		} catch (Exception e) {
 			System.out.println("error occured");
 			Notification message = new Notification();
@@ -106,9 +112,7 @@ public class RestService {
 			}
 
 			if(user != null && profile.getUsername().equals(user.getUsername()) && profile.getPassword().equals(user.getPassword())){
-				
-				System.out.println("USER INFO- U: "+user.getUsername() +" P:"+user.getPassword());	
-				System.out.println("PROFILE INFO- U: "+profile.getUsername() +" P:"+profile.getPassword());
+
 				
 				auth.setUrl("http://localhost:8080/toDoList/todo.jsp");
 				auth.setUsername(user.getUsername());
@@ -122,6 +126,153 @@ public class RestService {
 			
 			return response.build();	
 	}
+	
+	@POST
+	@Path("/addItem")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addItem(String req){
+
+		String reqString = json.toString();
+	
+		
+		int itemIndexStart = StringUtils.ordinalIndexOf(req, "\"", 3);
+		int itemIndexEnd = StringUtils.ordinalIndexOf(req, "\"", 4);
+		System.out.println("is substring thingy working?: "+ req.substring(itemIndexStart+1,itemIndexEnd ));
+		String itemName = req.substring(itemIndexStart+1,itemIndexEnd );
+		
+		int usernameIndexStart = StringUtils.ordinalIndexOf(req, "\"", 7);
+		int usernameIndexEnd = StringUtils.ordinalIndexOf(req, "\"", 8);
+		System.out.println("is substring thingy working TWICE?: "+ req.substring(usernameIndexStart+1,usernameIndexEnd ));
+		String username = req.substring(usernameIndexStart+1,usernameIndexEnd);
+		
+
+		User user = serviceEjb.searchforAccountByUsername(username);
+		Item item = new Item(user, itemName);
+		//Item item = json.fromJson(req, Item.class);
+		ResponseBuilder response = null;
+		
+		
+		System.out.println("RESTSERVICE item des: "+ item.getDescrip()+ "item name: "+item.getItemID());
+		try {
+			String userExist = serviceEjb.addNewitem(item);
+			 
+			Notification message = new Notification();
+			message.setNotification(userExist);
+			response =  Response.status(200).entity(message).type(MediaType.APPLICATION_JSON);
+		} catch (Exception e) {
+			System.out.println("error occured");
+			Notification message = new Notification();
+			message.setNotification("Search: Internal Server Error");
+			response = Response.status(500).entity(message).type(MediaType.APPLICATION_JSON);
+		}
+		
+		return response.build();		
+	}
+
+	
+	@GET
+	@Path("/pullList/{accountName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response lookupUsersHistoryRequest(
+    		@PathParam("accountName") String accountName, 
+    		@CookieParam("user") Cookie username,
+			@CookieParam("password") Cookie password){
+		
+		ResponseBuilder response = null;
+		User user = null;
+		List<Item> items = null;
+		Notification alert = new Notification();
+		MessageRapper<Item> results = new MessageRapper<Item>();
+		
+		try {
+			user = serviceEjb.searchforAccountUsernameAndPassword(username.getValue(), password.getValue());
+		} catch (Exception e) {
+			
+		}
+		
+		if(user != null && username.getValue().equals(user.getUsername()) && password.getValue().equals(user.getPassword())){
+
+			try {
+				items = serviceEjb.searchforUserItems(accountName);
+				results.setData(items);
+			} catch (Exception e) {
+				alert.setNotification("Query Not Sucessful");
+				alert.setNotification1("Server Error Occured");
+				return Response.status(500).entity(alert).type(MediaType.APPLICATION_JSON).build();
+			}
+			
+			if(items != null){
+				response = Response.ok(results, MediaType.APPLICATION_JSON);
+			}else{
+				alert.setNotification("Query Successful");
+				alert.setNotification1("No Result Exist for Query");
+				return Response.status(404).entity(alert).type(MediaType.APPLICATION_JSON).build();
+			}
+		}else{		
+			alert.setNotification("Query Not Successful");
+			alert.setNotification1("Account Is UnAuthorized");
+			return Response.status(401).entity(alert).type(MediaType.APPLICATION_JSON).build();
+		}
+	
+		return response.build();
+	}
+	
+	
+
+	
+	
+	
+//	
+//	@GET 
+//	@Path("/pullList/{user}")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response pullList(
+//								@PathParam("username") String user, 
+//								@CookieParam("user") Cookie username,
+//								@CookieParam("password") Cookie password){
+//		List<Item> items = null;
+//		User person = null;
+//		Notification alert = new Notification();
+//		
+//		try {
+//			person = serviceEjb.searchforAccountUsernameAndPassword(username.getValue(), password.getValue());
+//		} catch (Exception e) {
+//		}
+//		
+//		if(person != null && username.getValue().equals(person.getUsername()) && username.getValue().equals(person.getPassword())){
+//			try {
+//				items = serviceEjb.searchForUsersItems(user);
+//			} catch (Exception e) {
+//				alert.setNotification("Query Not Sucessful");
+//				alert.setNotification1("Server Error Occured");
+//				return Response.status(500).entity(alert).type(MediaType.APPLICATION_JSON).build();
+//			}
+//				
+//			if(items == null){
+//				alert.setNotification("Query  Sucessful");
+//				alert.setNotification1("No Result Exist for Query");
+//				return Response.status(404).entity(alert).type(MediaType.APPLICATION_JSON).build();
+//			}
+//			
+//			MessageRapper<Top10Failure> message = new MessageRapper<Top10Failure>();
+//			message.setData(items);
+//			message.setNotification1("Query Successful");
+//			
+//		
+//			return Response.status(200).entity(message).type(MediaType.APPLICATION_JSON).build();
+//		}else{
+//			alert.setNotification("Query Not Sucessful");
+//			alert.setNotification1("Account Is UnAuthorized");
+//			return Response.status(401).entity(alert).type(MediaType.APPLICATION_JSON).build();
+//		}
+//		
+//		
+//	}
+	
+	
+	
+	
 //	@SuppressWarnings("deprecation")
 //	@POST
 //	@Path("/uploadfile")
