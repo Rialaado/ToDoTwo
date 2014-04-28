@@ -20,35 +20,61 @@
 		window.location.assign("http://localhost:8080/toDoList/login.jsp"); 
 	}
 
+	function deleteAllRows() {
+		var myTable = document.getElementById("tableid");
+		var rowCount = myTable.rows.length;
+		for (var i = 0; i < rowCount; i++) {
+			myTable.deleteRow(0);
+		}
+	}
+
+	function editChoice(){
+		
+		alert("im edit and pressed");
+		}
+
+	function removeChoice(){
+		alert("im remove and pressed");
+		}
+
+	
 	function populateToDoTable(jsonObj){
+		
 		var table = document.getElementById("tableid");
 		var row = table.insertRow(0);
 		var cell1 = row.insertCell(0);
 		var cell2 = row.insertCell(1); 
 		var cell3 = row.insertCell(2); 
 		var cell4 = row.insertCell(3);
-	
+
+		cell1.style.fontWeight = 'bold';
+		cell2.style.fontWeight = 'bold';
+		cell3.style.fontWeight = 'bold';
+		cell4.style.fontWeight = 'bold';
+		
 		cell1.innerHTML = "No.";
 		cell2.innerHTML = "Item";
-		cell3.innerHTML = "Options";
-		  
-		
-		for(var i = 0; i < jsonObj.events.length; i++){
+		cell3.innerHTML = "Edit";
+		cell4.innerHTML = "Remove";
+
+		for(var i = 0; i < jsonObj.length; i++){
 			row = table.insertRow(i+1);
 			cell1 = row.insertCell(0);
 			cell2 = row.insertCell(1);
-			cell3 = row.insertCell(2); 
+			cell3 = row.insertCell(2);
+			cell4 = row.insertCell(3); 
 		
 			cell1.innerHTML = i+1;
-			cell2.innerHTML = jsonObj.events[i].eventdetail.id.causeCode;
-			cell3.innerHTML = "Edit/Remove";
+			cell2.innerHTML = jsonObj[i].descrip;
+			cell3.innerHTML = '<button type="button" onClick="editChoice(this)">Edit</button>';
+			cell4.innerHTML = '<button type="button" onClick="removeChoice(this)">Remove</button>';
 		
 		}       
 	}
 
 	function getToDoList() {
 		var JSON_object;
-	
+		
 		var addUrl = "";
 		var accountName = getCookie("user");
 		
@@ -56,13 +82,14 @@
 			addUrl = accountName;
 		}
 				getRequest( { 
-			    	url: "http://localhost:8080/RestJPA/services/message/pullList/" + addUrl,
+			    	url: "http://localhost:8080/toDoList/services/message/pullList/" + addUrl,
 			        payload: null,
 			        handler: function(response) { 
 				    	
 			        	JSON_object = JSON.parse(response);
-			        	//deleteAllRows();
+			        	deleteAllRows();
 						populateToDoTable(JSON_object.data); 
+
 			           }
 			  		} );
 }
@@ -103,6 +130,7 @@
 		        payload: JSON.stringify({item: item, username:username }),
 		        handler: function(response){ 
 		        	JSON_object = JSON.parse(response);
+		        	getToDoList();
 		        	//deleteAllRows();
 					//populateToDoTable(JSON_object.data); 
 		           }
@@ -155,7 +183,7 @@
 	</script>
 
 
-<body>
+<body onload="getToDoList()">
 
 	<%
 	String userName = null;

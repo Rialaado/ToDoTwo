@@ -156,7 +156,6 @@ public class RestService {
 		System.out.println("RESTSERVICE item des: "+ item.getDescrip()+ "item name: "+item.getItemID());
 		try {
 			String userExist = serviceEjb.addNewitem(item);
-			 
 			Notification message = new Notification();
 			message.setNotification(userExist);
 			response =  Response.status(200).entity(message).type(MediaType.APPLICATION_JSON);
@@ -179,14 +178,19 @@ public class RestService {
     		@CookieParam("user") Cookie username,
 			@CookieParam("password") Cookie password){
 		
+		System.out.println("pullLIst getting here?");
+		
 		ResponseBuilder response = null;
 		User user = null;
 		List<Item> items = null;
 		Notification alert = new Notification();
 		MessageRapper<Item> results = new MessageRapper<Item>();
 		
+		System.out.println("check username: "+username.getValue()+ " and password: "+password.getValue());
+		
 		try {
 			user = serviceEjb.searchforAccountUsernameAndPassword(username.getValue(), password.getValue());
+			System.out.println("pullLIst -user successful: "+user.getPassword());
 		} catch (Exception e) {
 			
 		}
@@ -194,7 +198,8 @@ public class RestService {
 		if(user != null && username.getValue().equals(user.getUsername()) && password.getValue().equals(user.getPassword())){
 
 			try {
-				items = serviceEjb.searchforUserItems(accountName);
+				items = serviceEjb.searchforUserItems(username.getValue());
+				System.out.println("pullLIst -got items array-length: "+items.size());
 				results.setData(items);
 			} catch (Exception e) {
 				alert.setNotification("Query Not Sucessful");
@@ -203,6 +208,7 @@ public class RestService {
 			}
 			
 			if(items != null){
+				System.out.println("checking again for null: size: "+ results.getData().size());
 				response = Response.ok(results, MediaType.APPLICATION_JSON);
 			}else{
 				alert.setNotification("Query Successful");

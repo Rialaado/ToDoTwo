@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.util.List;
 
 
@@ -46,7 +48,7 @@ public class User implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	@JsonIgnore
 	public List<Item> getItems() {
 		return this.items;
 	}

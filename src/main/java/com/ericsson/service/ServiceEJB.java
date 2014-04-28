@@ -134,7 +134,7 @@ public class ServiceEJB implements IServiceEJB {
 			items = itemDAO.findAllItemsForUser(accountName);
 		}
 		catch(Exception e){
-			System.out.println("servicedao search for account error");
+			System.out.println("servicedao search for user items error");
 			items = null;
 		}
 		return items;

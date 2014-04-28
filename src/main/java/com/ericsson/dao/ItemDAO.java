@@ -101,9 +101,10 @@ public class ItemDAO implements IItemDAO{
 	public List<Item> findAllItemsForUser(String username) {
 		List<Item> items = null;
 		String name = username;
+		System.out.println("in itemDAO is name ok?: "+name);
 		try {
 			
-			Query query = em.createNativeQuery("select * from item where username = :username", User.class);
+			Query query = em.createNativeQuery("select * from items where username = :username", Item.class);
 			query.setParameter("username", name);
 			items = (List<Item>) query.getResultList();
 			
